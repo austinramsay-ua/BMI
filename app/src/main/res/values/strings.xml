@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BMI</string>
+    <string name="header">"Let's Calculate Your BMI!"</string>
+    <string name="height_prompt">"How tall are you?"</string>
+    <string name="weight_prompt">"How much do you weigh?"</string>
+    <string name="ft_hint">"Feet"</string>
+    <string name="in_hint">"Inches"</string>
+    <string name="lbs_hint">"Pounds (lbs)"</string>
+    <string name="main_calc_button">"Calculate"</string>
+    <string name="clr_button">"Clear"</string>
+    <string name="rate_calc_button">"Calculate Heart Rate"</string>
+</resources>
