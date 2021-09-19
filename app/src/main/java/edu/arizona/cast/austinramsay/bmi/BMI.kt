@@ -9,6 +9,13 @@ data class BMI(val height_ft: Int,
     val index: Double?
     val status: String?
 
+    companion object {
+        const val STATUS_NORMAL = "Normal"
+        const val STATUS_OVERWEIGHT = "Overweight"
+        const val STATUS_UNDERWEIGHT = "Underweight"
+        const val STATUS_OBESE = "Obese"
+    }
+
     // Upon instance creation, calculate the BMI index and status properties using the provided
     // arguments.
     init {

@@ -6,7 +6,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import java.text.DecimalFormat
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import android.graphics.Color
+import android.util.Log
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,9 +24,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statusText: TextView
     private lateinit var indexText: TextView
 
+    // Prepare ViewModel
+    private val bmiViewModel: BMIViewModel by lazy {
+        ViewModelProviders.of(this).get(BMIViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Handle the ViewModel
+        val provider: ViewModelProvider = ViewModelProviders.of(this)
+        val bmiViewModel = provider.get(BMIViewModel::class.java)
+        Log.d(TAG, "Got the BMIViewModel: $bmiViewModel.")
 
         // Get all required buttons, input fields, and text views
         bmiCalcButton = findViewById(R.id.bmi_calc_button)
@@ -35,40 +50,26 @@ class MainActivity : AppCompatActivity() {
 
         // Set the calculate button listener
         bmiCalcButton.setOnClickListener {
-            try {
 
-                // Parse all input fields for required info (height and weight)
-                val heightFt = heightFtInput.text.toString().toInt()
-                val heightIn = heightInInput.text.toString().toInt()
-                val weight = weightInput.text.toString().toInt()
+            val heightFt = heightFtInput.text.toString()
+            val heightIn = heightInInput.text.toString()
+            val weightLbs = weightInput.text.toString()
 
-                // Create a BMI instance with the parsed info
-                val bmiResult = BMI(heightFt, heightIn, weight)
-
-                // Set the BMI status text view result using the calculated status
-                statusText.text = bmiResult.status
-
-                // Set the BMI index text view using formatted output of the BMI index calculation
-                val df = DecimalFormat("#.0")
-                indexText.text = df.format(bmiResult.index)
-
-                // Display user notification that calculation completed
-                Toast.makeText(
-                    this,
-                    "BMI Calculated!",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-            } catch (e: NumberFormatException) {
-
-                // Catch exceptions when invalid input or missing input is found in the input fields
+            if (heightFt.isBlank() || heightIn.isBlank() || weightLbs.isBlank()) {
 
                 // Display user notification that input is invalid/missing
                 Toast.makeText(
                     this,
-                    "Please verify input is correct!",
+                    "Please verify that input values are correct.",
                     Toast.LENGTH_SHORT
                 ).show()
+
+            } else {
+
+                // Update the view model with extracted data
+                bmiViewModel.updateBMI(heightFt, heightIn, weightLbs)
+                syncResults()
+
             }
         }
 
@@ -83,5 +84,21 @@ class MainActivity : AppCompatActivity() {
 
         // Heart rate calculate button is disabled for now
         rateCalcButton.isEnabled = false
+
+        // Sync to the view model, if activity is new/re-created it needs to sync to the model
+        syncAll()
+    }
+
+    private fun syncResults() {
+        statusText.text = bmiViewModel.bmiStatus
+        statusText.setTextColor(bmiViewModel.bmiStatusColor)
+        indexText.text = bmiViewModel.bmiIndexText
+    }
+
+    private fun syncAll() {
+        heightFtInput.setText(bmiViewModel.heightFt)
+        heightInInput.setText(bmiViewModel.heightIn)
+        weightInput.setText(bmiViewModel.weightLbs)
+        syncResults()
     }
 }
