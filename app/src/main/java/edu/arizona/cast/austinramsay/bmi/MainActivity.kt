@@ -10,8 +10,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.ViewModelProvider
 import android.graphics.Color
 import android.util.Log
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 
 private const val TAG = "MainActivity"
+private const val KEY_INDEX = "index"
+private const val REQUEST_AGE = 0
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +35,13 @@ class MainActivity : AppCompatActivity() {
         ViewModelProviders.of(this).get(BMIViewModel::class.java)
     }
 
+    // Activity Result API
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        result -> if (result.resultCode == Activity.RESULT_OK) {
+            bmiViewModel.updateAge(result.data?.getStringExtra(EXTRA_AGE_SET))
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,8 +52,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Got the BMIViewModel: $bmiViewModel.")
 
         // Get all required buttons, input fields, and text views
-        bmiCalcButton = findViewById(R.id.bmi_calc_button)
-        clrButton = findViewById(R.id.bmi_clr_button)
+        bmiCalcButton = findViewById(R.id.calc_button)
+        clrButton = findViewById(R.id.clr_button)
         rateCalcButton = findViewById(R.id.rate_calc_button)
         heightFtInput = findViewById(R.id.ft_input)
         heightInInput = findViewById(R.id.in_input)
@@ -73,6 +86,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Heart Rate calculator button - switch to new activity
+        rateCalcButton.setOnClickListener {
+            // If the BMI ViewModel contains a saved age returned from the heart calculator previously,
+            // then send the saved age into the heart rate activity to restore it.
+            val savedAge = bmiViewModel.age ?: ""
+
+            val intent = HeartRateActivity.newIntent(this@MainActivity, savedAge)
+            // startActivityForResult(intent, REQUEST_AGE)
+            // startActivity(intent)
+            resultLauncher.launch(intent)
+        }
+        rateCalcButton.isEnabled = true
+
         // Clear button should set all input fields and output text views to empty
         clrButton.setOnClickListener {
             heightFtInput.text = null
@@ -81,9 +107,6 @@ class MainActivity : AppCompatActivity() {
             statusText.text = null
             indexText.text = null
         }
-
-        // Heart rate calculate button is disabled for now
-        rateCalcButton.isEnabled = false
 
         // Sync to the view model, if activity is new/re-created it needs to sync to the model
         syncAll()

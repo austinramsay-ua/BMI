@@ -16,6 +16,7 @@ class BMIViewModel : ViewModel() {
     var bmiIndexText: String? = null
     var bmiStatus: String? = null
     var bmiStatusColor: Int = Color.GREEN
+    var age: String? = null
 
     fun updateBMI(height_ft: String, height_in: String, weight_lbs: String) {
 
@@ -44,6 +45,10 @@ class BMIViewModel : ViewModel() {
         } catch (e: NumberFormatException) {
             Log.d(TAG, "NumberFormatException occurred with BMI input values.")
         }
+    }
+
+    fun updateAge(age: String?) {
+        this.age = age
     }
 
 }

@@ -1,12 +1,17 @@
 <resources>
     <string name="app_name">BMI</string>
-    <string name="header">"Let's Calculate Your BMI!"</string>
+    <string name="header_bmi">"Let's Calculate Your BMI!"</string>
+    <string name="header_hrate">"Let's Calculate Your Heart Rate!"</string>
     <string name="height_prompt">"How tall are you?"</string>
     <string name="weight_prompt">"How much do you weigh?"</string>
+    <string name="age_prompt">"What is your age?"</string>
     <string name="ft_hint">"Feet"</string>
     <string name="in_hint">"Inches"</string>
     <string name="lbs_hint">"Pounds (lbs)"</string>
-    <string name="main_calc_button">"Calculate"</string>
+    <string name="age_hint">"Age in years"</string>
+    <string name="calc_button">"Calculate"</string>
     <string name="clr_button">"Clear"</string>
     <string name="rate_calc_button">"Calculate Heart Rate"</string>
+    <string name="return_bmi_button">"Return to BMI Calculator"</string>
+    <string name="heart_rate_warning">"Calculated heart rate values are only estimates. Values can vary with health, fitness and gender."</string>
 </resources>
